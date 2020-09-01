@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: flask-cache
+  template:
+    metadata:
+      labels:
+        name: flask-cache
+    spec:
+      containers:
+        - name: cache-service
+          image: xasag94215/flask-cache
+          ports:
+            - containerPort: 5000
+              name: rest
+          # resources:
+          #   requests:
+          #     cpu: 100m
+          #     memory: 100Mi
+          #   limits:
+          #     cpu: 150m
+          #     memory: 250Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-cache
+spec:
+  selector:
+    name: flask-cache
+  ports:
+    - port: 80
+      targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: flask-cache
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          serviceName: flask-cache
+          servicePort: 80
+        path: /
+---
+apiVersion: "autoscaling.k8s.io/v1beta2"
+kind: VerticalPodAutoscaler
+metadata:
+  name: flask-cache
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind: Deployment
+    name: flask-cache
+  resourcePolicy:
+    containerPolicies:
+      - containerName: '*'
+        minAllowed:
+          cpu: 10m
+          memory: 64Mi
+        maxAllowed:
+          cpu: 1
+          memory: 4Gi
+        controlledResources: ["cpu", "memory"]
