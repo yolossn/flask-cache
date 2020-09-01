@@ -50,22 +50,3 @@ spec:
           servicePort: 80
         path: /
 ---
-apiVersion: "autoscaling.k8s.io/v1beta2"
-kind: VerticalPodAutoscaler
-metadata:
-  name: flask-cache
-spec:
-  targetRef:
-    apiVersion: "apps/v1"
-    kind: Deployment
-    name: flask-cache
-  resourcePolicy:
-    containerPolicies:
-      - containerName: '*'
-        minAllowed:
-          cpu: 10m
-          memory: 64Mi
-        maxAllowed:
-          cpu: 1
-          memory: 4Gi
-        controlledResources: ["cpu", "memory"]
