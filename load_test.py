@@ -1,6 +1,6 @@
 from locust import HttpUser, task, constant
-import names
 import json
+import uuid
 import random
 
 class cacheService(HttpUser):
@@ -10,7 +10,8 @@ class cacheService(HttpUser):
 
     @task
     def create(self):
-        payload = {"username":names.get_full_name()}
+        id = uuid.uuid4()
+        payload = {"username":str(id)}
         headers = {'content-type': 'application/json'}
         resp = self.client.post("/cache/new", data=json.dumps(payload),headers=headers)
         if resp.status_code == 200:
