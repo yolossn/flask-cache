@@ -8,6 +8,10 @@ from .cache import cache
 
 main = Blueprint('main',__name__)
 
+@main.route("/")
+def index():
+    return "Hi from flask-cache 🤓"
+
 @main.route("/cache/new",methods=["POST"])
 def update():
     try:

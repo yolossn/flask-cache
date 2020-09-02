@@ -12,7 +12,6 @@ RUN python3 -m pip install -r requirements.txt
 
 RUN apt -y install memcached
 COPY . .
-COPY .flaskenv .
 
 EXPOSE 5000
 RUN chmod +x init.sh
